@@ -146,7 +146,7 @@ library(lme4)
 library(sva)
 Lmbeta<- as.matrix(exp)
 ##select top 5 covariates or the proportion value of covariates > 0.1
-mod = model.matrix( ~ meta$Deletion_average_length + meta$Average_depth + meta$Mismatch_rate_per_base + meta$Insertion_average_length + meta$Treatment) 
+mod = model.matrix( ~ meta$ + meta$ + meta$ + meta$ + meta$) 
 n.sv = num.sv(Lmbeta, mod)   # n.sv=30
 svobj = sva(Lmbeta, mod, n.sv=n.sv)
 modSv = cbind(mod, svobj$sv)
@@ -155,7 +155,7 @@ write.table(modSv,"cov.txt",col.names=T,row.names=F,quote=F,sep="\t")
 cov = read.table("cov.txt",head=T,row.names=1)
 dds <- DESeqDataSetFromMatrix(exp, cov, design =~ Mismatch_rate_per_base.+sv+Treatment)
 
-datExpr = assay(vst(dds))
+datExpr = assay(rlog(dds))
 ##remove outliers
 sdout <- 2; normadj <- (0.5+0.5*bicor(datExpr, use='pairwise.complete.obs'))^2
 netsummary <- fundamentalNetworkConcepts(normadj);
